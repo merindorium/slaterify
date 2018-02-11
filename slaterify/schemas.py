@@ -1,7 +1,7 @@
 from marshmallow import Schema, fields, pre_load
 
 from node_schema import NodeSchema
-from api_nodes import Document, Path, Request
+from api_nodes import Document, Path, Request, RequestBody, Content, RequestContentType, SchemaObject, Property
 
 
 class DocumentInfoSchema(Schema):
@@ -10,9 +10,57 @@ class DocumentInfoSchema(Schema):
     description = fields.String()
 
 
+class PropertySchema(NodeSchema):
+    property_type = fields.String(load_from='type')
+    description = fields.String()
+
+    class Meta:
+        model = Property
+
+
+class PropertiesSchema(Schema):
+    @pre_load
+    def process_paths(self, data):
+        for path in data.keys():
+            self.declared_fields.update({
+                path: fields.Nested(PropertySchema)
+            })
+            self.fields.update({
+                path: fields.Nested(PropertySchema)
+            })
+
+
+class ObjectSchema(NodeSchema):
+    object_type = fields.String(load_from='type')
+    properties = fields.Nested(PropertiesSchema)
+
+    class Meta:
+        model = SchemaObject
+
+
+class RequestContentTypeSchema(NodeSchema):
+    request_schema = fields.Nested(ObjectSchema, load_from='schema')
+
+    class Meta:
+        model = RequestContentType
+
+
+class ContentSchema(NodeSchema):
+    json_content = fields.Nested(RequestContentTypeSchema, load_from='application/json')
+
+    class Meta:
+        model = Content
+
+
+class RequestBodySchema(NodeSchema):
+    content = fields.Nested(ContentSchema)
+
+    class Meta:
+        model = RequestBody
+
+
 class RequestSchema(NodeSchema):
-    request_body = fields.Dict(load_from='requestBody')
-    responses = fields.Dict()
+    request_body = fields.Nested(RequestBodySchema, load_from='requestBody')
 
     class Meta:
         model = Request

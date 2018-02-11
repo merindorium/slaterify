@@ -1,10 +1,68 @@
 import nodes
 
 
+class PropertiesTable(nodes.Table):
+    HEADERS = ('Parameter', 'Type', 'Description')
+    DATA_EXTRACT_SEQUENCE = ('name', 'property_type', 'description')
+
+
+class Property:
+    def __init__(self, property_type, description=None):
+        self.property_type = property_type
+        self.description = description or ''
+        self.name = None
+
+    def __repr__(self):
+        return '{}'.format(self.name)
+
+
+class SchemaObject(nodes.Node):
+    def __init__(self, object_type, properties):
+        self.object_type = object_type
+        self.properties = properties
+
+        self._update_properties()
+
+    def render(self):
+        return PropertiesTable(self.properties.values()).render()
+
+    def _update_properties(self):
+        for property_name, property_node in self.properties.items():
+            property_node.name = property_name
+
+
+class RequestContentType(nodes.Node):
+    def __init__(self, request_schema):
+        self.request_schema = request_schema
+
+    def render(self):
+        blocks = list()
+
+        blocks.append(nodes.H3('Attributes').render())
+        blocks.append(self.request_schema.render())
+
+        return '\n'.join(blocks)
+
+
+class Content(nodes.Node):
+    def __init__(self, json_content):
+        self.json_content = json_content
+
+    def render(self):
+        return self.json_content.render()
+
+
+class RequestBody(nodes.Node):
+    def __init__(self, content):
+        self.content = content
+
+    def render(self):
+        return self.content.render()
+
+
 class Request(nodes.Node):
-    def __init__(self, responses, request_body=None):
+    def __init__(self, request_body=None):
         self.request_body = request_body
-        self.responses = responses
 
         self.method = None
         self.route = None
@@ -14,6 +72,9 @@ class Request(nodes.Node):
 
         blocks.append(nodes.H3('HTTP Request').render())
         blocks.append(nodes.Code('{} {}'.format(self.method.upper(), self.route)).render())
+
+        if self.request_body:
+            blocks.append(self.request_body.render())
 
         return '\n\n'.join(blocks)
 
