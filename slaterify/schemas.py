@@ -1,7 +1,7 @@
 from marshmallow import Schema, fields, pre_load
 
-from model_schema import NodeSchema
-from nodes import Document, Path, Request
+from node_schema import NodeSchema
+from api_nodes import Document, Path, Request
 
 
 class DocumentInfoSchema(Schema):

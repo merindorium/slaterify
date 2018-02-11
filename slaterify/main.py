@@ -10,7 +10,7 @@ if __name__ == '__main__':
         data = json.load(api)
         document, _ = DocumentSchema(strict=True).load(data)
 
-    rendered_data = '\n'.join(document.render())
+    rendered_data = document.render()
 
     with open('rendered_api.md', 'w') as rf:
         rf.write(rendered_data)
