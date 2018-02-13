@@ -13,7 +13,7 @@ class Property:
         self.name = None
 
     def __repr__(self):
-        return '{}'.format(self.name)
+        return f'{self.name}'
 
 
 class SchemaObject(nodes.Node):
@@ -71,7 +71,7 @@ class Request(nodes.Node):
         blocks = list()
 
         blocks.append(nodes.H3('HTTP Request').render())
-        blocks.append(nodes.Code('{} {}'.format(self.method.upper(), self.route)).render())
+        blocks.append(nodes.Code(f'{self.method.upper()} {self.route}').render())
 
         if self.request_body:
             blocks.append(self.request_body.render())
