@@ -33,6 +33,7 @@ class PropertiesSchema(Schema):
 class ObjectSchema(NodeSchema):
     object_type = fields.String(load_from='type')
     properties = fields.Nested(PropertiesSchema)
+    example = fields.Dict()
 
     class Meta:
         model = SchemaObject

@@ -1,4 +1,21 @@
 import nodes
+import json
+
+
+class Annotation(nodes.Text):
+    def render(self):
+        return f'> {self.text}'
+
+
+class ExampleRequestText(nodes.Text):
+    def render(self):
+        blocks = list()
+        request_body = json.dumps(self.text, indent=4)
+
+        blocks.append(Annotation('Example Request').render())
+        blocks.append(nodes.MultiCode(request_body, syntax='json').render())
+
+        return '\n\n'.join(blocks)
 
 
 class PropertiesTable(nodes.Table):
@@ -12,19 +29,21 @@ class Property:
         self.description = description or ''
         self.name = None
 
-    def __repr__(self):
-        return f'{self.name}'
-
 
 class SchemaObject(nodes.Node):
-    def __init__(self, object_type, properties):
+    def __init__(self, object_type, properties, example=None):
         self.object_type = object_type
         self.properties = properties
+        self.example = example
 
         self._update_properties()
 
     def render(self):
-        return PropertiesTable(self.properties.values()).render()
+        blocks = list()
+
+        blocks.append(PropertiesTable(self.properties.values()).render())
+
+        return '\n\n'.join(blocks)
 
     def _update_properties(self):
         for property_name, property_node in self.properties.items():
@@ -38,10 +57,11 @@ class RequestContentType(nodes.Node):
     def render(self):
         blocks = list()
 
+        blocks.append(ExampleRequestText(self.request_schema.example).render())
         blocks.append(nodes.H3('Attributes').render())
         blocks.append(self.request_schema.render())
 
-        return '\n'.join(blocks)
+        return '\n\n'.join(blocks)
 
 
 class Content(nodes.Node):
