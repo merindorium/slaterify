@@ -13,32 +13,32 @@ class Text(Node):
 
 class H1(Text):
     def render(self):
-        return '# {}'.format(self.text)
+        return f'# {self.text}'
 
 
 class H2(Text):
     def render(self):
-        return '## {}'.format(self.text)
+        return f'## {self.text}'
 
 
 class H3(Text):
     def render(self):
-        return '### {}'.format(self.text)
+        return f'### {self.text}'
 
 
 class H4(Text):
     def render(self):
-        return '#### {}'.format(self.text)
+        return f'#### {self.text}'
 
 
 class Code(Text):
     def render(self):
-        return '`{}`'.format(self.text)
+        return f'`{self.text}`'
 
 
 class MultiCode(Text):
     def render(self):
-        return '```\n{}\n```'.format(self.text)
+        return f'```\n{self.text}\n```'
 
 
 class TableRow(Text):
@@ -76,7 +76,7 @@ class Table(Node):
             text_row += header
             border_row += border
 
-        return '{}\n{}'.format(text_row, border_row)
+        return f'{text_row}\n{border_row}'
 
     def render_data(self):
         data_rows = []
