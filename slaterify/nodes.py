@@ -37,8 +37,12 @@ class Code(Text):
 
 
 class MultiCode(Text):
+    def __init__(self, text, syntax=None):
+        super(MultiCode, self).__init__(text)
+        self.syntax = syntax or ''
+
     def render(self):
-        return f'```\n{self.text}\n```'
+        return f'```{self.syntax}\n{self.text}\n```'
 
 
 class TableRow(Text):
