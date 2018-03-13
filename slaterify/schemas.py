@@ -34,6 +34,7 @@ class ObjectSchema(NodeSchema):
     object_type = fields.String(load_from='type')
     properties = fields.Nested(PropertiesSchema)
     example = fields.Dict()
+    ref = fields.String(load_from='$ref')
 
     class Meta:
         model = api_nodes.SchemaObject
@@ -89,9 +90,26 @@ class DocumentPaths(Schema):
             })
 
 
+class SchemaComponents(Schema):
+    @pre_load
+    def process_schema_components(self, data):
+        for schema_component in data.keys():
+            self.declared_fields.update({
+                schema_component: fields.Nested(ObjectSchema)
+            })
+            self.fields.update({
+                schema_component: fields.Nested(ObjectSchema)
+            })
+
+
+class DocumentComponents(Schema):
+    schemas = fields.Nested(SchemaComponents)
+
+
 class DocumentSchema(NodeSchema):
     info = fields.Nested(DocumentInfoSchema)
     paths = fields.Nested(DocumentPaths)
+    components = fields.Nested(DocumentComponents)
 
     class Meta:
         model = api_nodes.Document

@@ -1,0 +1,17 @@
+{% if path_request.request_body %}
+
+            {% if path_request.request_body.schema.example %}
+> Example request
+
+```json
+{{ path_request.request_body.schema.example|tojson(indent=4) }}
+```
+    {% endif %}
+        {% if path_request.request_body.schema.properties %}
+### Attributes
+
+|Name|Type|Description|
+|---|---|---|{% for property in path_request.request_body.schema.properties.values() %}
+|{{property.name}}|{{ property.property_type }}|{{ property.description }}|{% endfor %}
+    {% endif %}
+        {% endif %}

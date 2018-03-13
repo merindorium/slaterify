@@ -1,0 +1,7 @@
+## {{ path.summary }}
+{{ path.description }}
+{% for path_request in path.requests.values() %}
+
+`{{ path_request.method.upper() }} {{ path_request.route }}`
+{% include 'request_body.md.jinja2' %}
+{% endfor %}
