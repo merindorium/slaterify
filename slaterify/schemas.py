@@ -1,7 +1,7 @@
 from marshmallow import Schema, fields, pre_load
 
-from node_schema import NodeSchema
-from api_nodes import Document, Path, Request, RequestBody, Content, RequestContentType, SchemaObject, Property
+from slaterify import api_nodes
+from slaterify.node_schema import NodeSchema
 
 
 class DocumentInfoSchema(Schema):
@@ -15,7 +15,7 @@ class PropertySchema(NodeSchema):
     description = fields.String()
 
     class Meta:
-        model = Property
+        model = api_nodes.Property
 
 
 class PropertiesSchema(Schema):
@@ -36,35 +36,35 @@ class ObjectSchema(NodeSchema):
     example = fields.Dict()
 
     class Meta:
-        model = SchemaObject
+        model = api_nodes.SchemaObject
 
 
 class RequestContentTypeSchema(NodeSchema):
     request_schema = fields.Nested(ObjectSchema, load_from='schema')
 
     class Meta:
-        model = RequestContentType
+        model = api_nodes.RequestContentType
 
 
 class ContentSchema(NodeSchema):
     json_content = fields.Nested(RequestContentTypeSchema, load_from='application/json')
 
     class Meta:
-        model = Content
+        model = api_nodes.Content
 
 
 class RequestBodySchema(NodeSchema):
     content = fields.Nested(ContentSchema)
 
     class Meta:
-        model = RequestBody
+        model = api_nodes.RequestBody
 
 
 class RequestSchema(NodeSchema):
     request_body = fields.Nested(RequestBodySchema, load_from='requestBody')
 
     class Meta:
-        model = Request
+        model = api_nodes.Request
 
 
 class ApiEndpoint(NodeSchema):
@@ -74,7 +74,7 @@ class ApiEndpoint(NodeSchema):
     post = fields.Nested(RequestSchema)
 
     class Meta:
-        model = Path
+        model = api_nodes.Path
 
 
 class DocumentPaths(Schema):
@@ -94,4 +94,4 @@ class DocumentSchema(NodeSchema):
     paths = fields.Nested(DocumentPaths)
 
     class Meta:
-        model = Document
+        model = api_nodes.Document

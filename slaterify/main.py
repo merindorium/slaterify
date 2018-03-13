@@ -1,16 +1,26 @@
 import json
 import sys
 
-from schemas import DocumentSchema
+from jinja2 import Environment, PackageLoader
 
-if __name__ == '__main__':
+from slaterify.schemas import DocumentSchema
+
+
+def main():
     file_path = sys.argv[1]
+
+    env = Environment(loader=PackageLoader('slaterify', 'templates'))
+    template = env.get_template('document.md.jinja2')
 
     with open(file_path, 'r') as api:
         data = json.load(api)
         document, _ = DocumentSchema(strict=True).load(data)
 
-    rendered_data = document.render()
+    rendered_data = template.render(document=document)
 
-    with open('rendered_api.md', 'w') as rf:
+    with open('../rendered_api.md', 'w') as rf:
         rf.write(rendered_data)
+
+
+if __name__ == '__main__':
+    main()

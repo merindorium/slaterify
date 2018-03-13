@@ -1,0 +1,9 @@
+## {{ document.info.title }}
+{{ document.info.description }}
+{% for path in document.paths.values() %}
+### {{ path.summary }}
+{{ path.description }}
+{% for path_request in path.requests.values() %}
+`{{ path_request.method.upper() }} {{ path_request.route }}`
+{% endfor %}
+{% endfor %}
